@@ -208,19 +208,26 @@
 <script>
 import BScroll from 'better-scroll'
 
-  export default {
-    name: "Category",
-    data() {
-      return {
-        scroll: null
-      }
-    },
-    mounted() {
-      this.scroll = new BScroll(document.querySelector('.wrapper'), {
-      
-      })
+export default {
+  name: "Category",
+  data() {
+    return {
+      scroll: null
     }
+  },
+  mounted() {
+    this.scroll = new BScroll(document.querySelector('.wrapper'), {
+      probeType: 3,
+      pullUpLoad: true
+    })
+    this.scroll.on('scroll', (position) => {
+      // console.log(position)  // 监听滚动位置
+    })
+    this.scroll.on('pullingUp', () => {
+      console.log('上拉加载更多')
+    })
   }
+}
 </script>
 
 <style scoped>
@@ -228,7 +235,7 @@ import BScroll from 'better-scroll'
   height: 150px;
   background-color: red;
   
-  /*overflow: hidden;*/
+  overflow: hidden;
   /*overflow-y: scroll;*/
 }
 </style>
