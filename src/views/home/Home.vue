@@ -35,6 +35,7 @@ import BackTop from 'components/content/backTop/BackTop'
 
 // 方法
 import {getHomeMultidata, getHomeGoods} from "network/home"
+import {debounce} from "common/utils";
 
 
 export default {
@@ -76,6 +77,14 @@ export default {
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
   },
+  mounted() {
+    const refresh = debounce(this.$refs.scroll && this.$refs.scroll.refresh, 100)
+    
+    // 3.监听$bus
+    this.$bus.$on('itemImageLoad', () => {
+      refresh()
+    })
+  },
   methods: {
     /*
     * 网络请求相关的方法
@@ -87,7 +96,6 @@ export default {
         this.recommend = res.data.recommend.list
       })
     },
-    
     getHomeGoods(type) {
       const page = this.goods[type].page + 1
       getHomeGoods(type, page).then(res => {
@@ -98,6 +106,7 @@ export default {
         this.$refs.scroll.finishPullUp()
       })
     },
+    
     /*
     * 事件监听相关的方法
     * */
@@ -114,29 +123,30 @@ export default {
           break
       }
     },
-    
     contentScroll(position) {
       this.isShowBackTop = (-position.y) > 1000
-    },
-    
-    loadMore() {
-      this.getHomeGoods(this.currentType)
     },
     backClick() {
       this.$refs.scroll.scrollTo(0, 0)
     },
+    loadMore() {
+      console.log('加载更多');
+      this.getHomeGoods(this.currentType)
+    }
   }
 }
 </script>
 
 <style scoped>
 #home {
-  padding-top: 44px;
+  /*padding-top: 44px;*/
+  height: 100vh;
+  position: relative;
 }
 
 .home-nav {
   background-color: var(--color-tint);
-  color: white;
+  color: #fff;
   
   position: fixed;
   left: 0;
